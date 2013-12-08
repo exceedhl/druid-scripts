@@ -2,9 +2,11 @@
 
 apt-get update
 apt-get install -y openssh-server sshd supervisor vim less net-tools inetutils-ping curl git telnet nmap socat dnsutils netcat software-properties-common
-add-apt-repository ppa:webupd8team/java
+add-apt-repository -y ppa:webupd8team/java
 apt-get update
-DEBIAN_FRONTEND=noninteractive apt-get install oracle-java7-installer
+echo debconf shared/accepted-oracle-license-v1-1 select true | debconf-set-selections
+echo debconf shared/accepted-oracle-license-v1-1 seen true | debconf-set-selections
+DEBIAN_FRONTEND=noninteractive apt-get install -y oracle-java7-installer oracle-java7-set-default
 
 wget http://static.druid.io/artifacts/releases/druid-services-0.6.25-bin.tar.gz && \
   tar -zxf druid-services-*.gz && \
@@ -22,12 +24,6 @@ wget http://archive.apache.org/dist/kafka/old_releases/kafka-0.7.2-incubating/ka
   cd kafka && \
   ./sbt update && ./sbt package && cd ..
 
-
-if mysqladmin -u root password $DB_PASSWORD 2>&1; then
-  echo "Intial db root password is set now."
-else
-  echo "Existing db. root password is not changed."
-fi
 
 DEBIAN_FRONTEND=noninteractive apt-get install -y mysql-server
 
